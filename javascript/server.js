@@ -31,7 +31,7 @@ function start() {
         {
             type: "list",
             message: "What do you want to do?",
-            choices: ["View All Employees", "View All Departments", "View All Roles", "Add Employee", "Add Department", "Add Role", "Update Employee Role"],
+            choices: ["View All Employees", "View All Employees by Departments", "View All Employees by Role", "Add Employee", "Add Department", "Add Role", "Update Employee Role"],
             name: "firstQuestion"
         }
     ])
@@ -58,10 +58,12 @@ function start() {
          //if add department is chosen
          else if (answers.firstQuestion === "Add Department") {
             console.log ("add departments here!")
+            createDepartment();
         }
          //if add role is chosen
          else if (answers.firstQuestion === "Add Role") {
             console.log ("Add Role here!")
+            createRole();
         }
          //if update employee role is chosen
          else if (answers.firstQuestion === "Update Employee Role") {
@@ -69,3 +71,85 @@ function start() {
         }
     });
 };
+
+//function that will create departments
+function createDepartment() {
+   
+    inquirer
+      .prompt([
+        {
+          name: "department",
+          type: "input",
+          message: "What is the departments name?"
+        },
+
+      ])
+      .then(function(answer) {
+      
+        connection.query(
+          "INSERT INTO departments SET ?",
+          {
+            name: answer.department
+          },
+          function(err) {
+            if (err) throw err;
+            console.log("department added!");
+       
+            start();
+          });
+      });
+  };
+
+  //function that will create roles
+  function createRole() {
+
+    connection.query("SELECT * FROM departments", function(err, results) {
+        if (err) throw err;
+   
+    inquirer
+      .prompt([
+        {
+          name: "title",
+          type: "input",
+          message: "What is the role's title?"
+        },
+
+        {
+            name: "salary",
+            type: "input",
+            message: "What is the role's salary?"
+          },
+
+          {
+            name: "role_department",
+            type: "list",
+            message: "Which department is this role in?",
+            choices: function() {
+                var choiceArray = [];
+                for (var i = 0; i < results.length; i++) {
+                  choiceArray.push(results[i].name);
+                }
+                return choiceArray;
+              },
+          }
+      ])
+
+      .then(function(answer) {
+      
+        connection.query(
+          "INSERT INTO role SET ?",
+          {
+            title: answer.title,
+            salary: answer.salary,
+            department: answer.role_department
+          },
+          function(err) {
+            if (err) throw err;
+            console.log("role added!");
+       
+            start();
+          });
+      });
+
+    });
+  };
