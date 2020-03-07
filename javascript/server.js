@@ -123,15 +123,11 @@ function createDepartment() {
           },
 
           {
-            name: "role_department",
+            name: "department_id",
             type: "list",
             message: "Which department is this role in?",
             choices: function() {
-                // var choiceArray = [];
-                // for (var i = 0; i < results.length; i++) {
-                //   choiceArray.push(results[i].name);
-                // }
-                // return choiceArray;
+              
                 var choice = results.map(({ id, name }) => ({
                     value: id, name: `${id} ${name}`
                   }));
@@ -148,7 +144,7 @@ function createDepartment() {
           {
             title: answer.title,
             salary: answer.salary,
-            department_id: answer.role_department
+            department_id: answer.department_id
           },
           function(err) {
             if (err) throw err;
@@ -183,15 +179,16 @@ function createDepartment() {
               },
     
             {
-                name: "role",
+                name: "role_id",
                 type: "list",
                 message: "What is this employee's role?",
                 choices: function() {
-                    var choiceArray = [];
-                    for (var i = 0; i < results.length; i++) {
-                      choiceArray.push(results[i].title);
-                    }
-                    return choiceArray;
+              
+                    var choice = results.map(({ id, name }) => ({
+                        value: id, name: `${id} ${name}`
+                      }));
+                      console.log(choice);
+                      return choice;
                   },
               },
     
@@ -204,7 +201,7 @@ function createDepartment() {
               {
                 first_name: answer.firstName,
                 last_name: answer.lastName,
-                role: answer.role
+                role_id: answer.role_id
               },
               function(err) {
                 if (err) throw err;
