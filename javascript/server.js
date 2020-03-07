@@ -42,6 +42,7 @@ function start() {
         //if view all employees is chosen
         if (answers.firstQuestion === "View All Employees") {
             console.log ("view all employees!!!");
+            viewAllEmployees();
         }
         //if view all departments is chosen
         else if (answers.firstQuestion === "View All Departments") {
@@ -53,6 +54,7 @@ function start() {
         }
          //if add employee is chosen
          else if (answers.firstQuestion === "Add Employee") {
+             createEmployee();
             console.log ("add employee here!")
         }
          //if add department is chosen
@@ -125,11 +127,16 @@ function createDepartment() {
             type: "list",
             message: "Which department is this role in?",
             choices: function() {
-                var choiceArray = [];
-                for (var i = 0; i < results.length; i++) {
-                  choiceArray.push(results[i].name);
-                }
-                return choiceArray;
+                // var choiceArray = [];
+                // for (var i = 0; i < results.length; i++) {
+                //   choiceArray.push(results[i].name);
+                // }
+                // return choiceArray;
+                var choice = results.map(({ id, name }) => ({
+                    value: id, name: `${id} ${name}`
+                  }));
+                  console.log(choice);
+                  return choice;
               },
           }
       ])
@@ -141,10 +148,11 @@ function createDepartment() {
           {
             title: answer.title,
             salary: answer.salary,
-            department: answer.role_department
+            department_id: answer.role_department
           },
           function(err) {
             if (err) throw err;
+          
             console.log("role added!");
        
             start();
@@ -153,3 +161,57 @@ function createDepartment() {
 
     });
   };
+
+    //function that will create employees
+    function createEmployee() {
+
+        connection.query("SELECT * FROM role", function(err, results) {
+            if (err) throw err;
+       
+        inquirer
+          .prompt([
+            {
+              name: "firstName",
+              type: "input",
+              message: "What is this employee's first name?"
+            },
+
+            {
+                name: "lastName",
+                type: "input",
+                message: "What is this employee's last name?"
+              },
+    
+            {
+                name: "role",
+                type: "list",
+                message: "What is this employee's role?",
+                choices: function() {
+                    var choiceArray = [];
+                    for (var i = 0; i < results.length; i++) {
+                      choiceArray.push(results[i].title);
+                    }
+                    return choiceArray;
+                  },
+              },
+    
+          ])
+    
+          .then(function(answer) {
+          
+            connection.query(
+              "INSERT INTO employee SET ?",
+              {
+                first_name: answer.firstName,
+                last_name: answer.lastName,
+                role: answer.role
+              },
+              function(err) {
+                if (err) throw err;
+                console.log("employee added!")
+                start();
+              });
+          });
+    
+        });
+      };
