@@ -1,5 +1,5 @@
 # employee-tracker
-A node command line application that will help create, delete, and update employee information utilizing mysql.
+A node command line application that will help create, delete, and update employee information utilizing mysql. There will be prompts utilizing the inquirer package to guide the user through a series of questions and they can view the staus of their employees in various ways based on department, roles, and view all.
 
 # Unit 12 MySQL Homework: Employee Tracker
 
